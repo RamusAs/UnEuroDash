@@ -1,4 +1,4 @@
 export default {
-  baseURL: 'https://dev-test.saslapasserelle.com/',
-  // baseURL: 'http://localhost:5020/'
+  baseURL: 'http://localhost:5020/',
+  // baseURL: 'http://172.17.67.48:5020/',
 };

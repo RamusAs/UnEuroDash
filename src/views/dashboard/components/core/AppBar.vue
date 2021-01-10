@@ -3,9 +3,11 @@
     id="app-bar"
     absolut
     app
-    color="transparent"
+    :color="$vuetify.theme.dark ? '#121212e0' : '#eeee'"
     flat
     height="75"
+    elevate-on-scroll
+    scroll-target="#scrolling-techniques-7"
   >
     <v-btn
       class="mr-3"
@@ -53,15 +55,11 @@
 
     <div class="mx-3" />
 
-    <div
-      class="px-3"
-      fluid
-    >
-      <v-radio
+      <v-switch
+        class="mt-4 mb-0"
+        v-model="$vuetify.theme.dark"
         :label="$vuetify.theme.dark ? 'Light mode' : 'Dark Mode'"
-        @click="$vuetify.theme.dark = !$vuetify.theme.dark"
       />
-    </div>
 
     <v-menu
       bottom
