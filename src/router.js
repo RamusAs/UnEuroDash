@@ -44,6 +44,16 @@ export default new Router({
           component: () => import('@/views/dashboard/Articles'),
         },
         {
+          name: 'Blog',
+          path: '/blog',
+          component: () => import('@/views/dashboard/Blog'),
+        },
+        {
+          name: 'BlogArticle',
+          path: '/blog/:id',
+          component: () => import('@/views/dashboard/pages/BlogArticle')
+        },
+        {
           name: 'Google Maps',
           path: 'maps/google-maps',
           component: () => import('@/views/dashboard/maps/GoogleMaps'),

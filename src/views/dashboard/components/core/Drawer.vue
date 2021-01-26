@@ -18,22 +18,10 @@
       nav
     >
       <v-list-item>
-        <v-list-item-avatar
-          class="align-self-center"
-          color="white"
-          contain
-        >
-          <v-img
-            src="https://demos.creative-tim.com/vuetify-material-dashboard/favicon.ico"
-            max-height="30"
-          />
-        </v-list-item-avatar>
-
         <v-list-item-content>
-          <v-list-item-title
-            class="display-1"
-            v-text="profile.title"
-          />
+          <v-list-item-title class="display-1">
+            Un Euro Dashboard 
+          </v-list-item-title>
         </v-list-item-content>
       </v-list-item>
     </v-list>
@@ -44,8 +32,7 @@
       expand
       nav
     >
-      <!-- Style cascading bug  -->
-      <!-- https://github.com/vuetifyjs/vuetify/pull/8574 -->
+
       <div />
 
       <template v-for="(item, i) in computedItems">
@@ -54,7 +41,6 @@
           :key="`group-${i}`"
           :item="item"
         >
-          <!--  -->
         </base-item-group>
 
         <base-item
@@ -64,8 +50,6 @@
         />
       </template>
 
-      <!-- Style cascading bug  -->
-      <!-- https://github.com/vuetifyjs/vuetify/pull/8574 -->
       <div />
     </v-list>
   </v-navigation-drawer>
@@ -101,6 +85,11 @@
           title: 'Catégories',
           icon: 'mdi-archive',
           to: '/categories',
+        },
+        {
+          title: 'Blog',
+          icon: 'mdi-post',
+          to: '/blog',
         },
         {
           title: 'Messages',

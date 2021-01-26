@@ -283,22 +283,22 @@
             sortable: false,
             align: 'center',
           },
-        ],
-        editedIndex: -1,
-        editedItem: {
-          idCat: undefined,
-          title: '',
-          img: '',
-          subtitle: '',
-          desc: '',
-        },
-        defaultItem: {
-          idCat: undefined,
-          title: '',
-          img: '',
-          subtitle: '',
-          desc: '',
-        }
+          ],
+          editedIndex: -1,
+          editedItem: {
+            idCat: undefined,
+            title: '',
+            img: '',
+            subtitle: '',
+            desc: '',
+          },
+          defaultItem: {
+            idCat: undefined,
+            title: '',
+            img: '',
+            subtitle: '',
+            desc: '',
+          }
         }
     },
     methods: {
