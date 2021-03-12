@@ -65,6 +65,7 @@
       bottom
       left
       offset-y
+      :close-on-content-click="false"
       origin="top right"
       transition="scale-transition"
     >
@@ -76,16 +77,18 @@
           v-bind="attrs"
           v-on="on"
         >
+        
+          <v-icon>mdi-bell</v-icon>
           <v-badge
+            v-if="notifications.length"
             color="red"
             overlap
             bordered
+            class="mb-6"
           >
-            <template v-slot:badge>
-              <span>5</span>
+            <template v-slot:badge >
+              <span>{{ notifications.length }}</span>
             </template>
-
-            <v-icon>mdi-bell</v-icon>
           </v-badge>
         </v-btn>
       </template>
@@ -94,12 +97,22 @@
         :tile="false"
         nav
       >
-        <div>
+        <div >
+          <app-bar-item v-if="!notifications.length">
+            <v-list-item-title>
+              Vous n'avez aucune nouvelle notification
+            </v-list-item-title>
+          </app-bar-item>
           <app-bar-item
-            v-for="(n, i) in notifications"
-            :key="`item-${i}`"
+            v-for="item in notifications"
+            :key="item.id"
           >
-            <v-list-item-title v-text="n" />
+            <v-list-item-title>
+              {{ item.notification }}
+            </v-list-item-title>
+            <v-list-item-action @click="supp(item)">
+              x
+            </v-list-item-action>
           </app-bar-item>
         </div>
       </v-list>
@@ -122,6 +135,7 @@
 
   // Utilities
   import { mapState, mapMutations } from 'vuex'
+  import * as NotifReq from '@/api/notification'
 
   export default {
     name: 'DashboardCoreAppBar',
@@ -163,13 +177,7 @@
     },
 
     data: () => ({
-      notifications: [
-        'Mike John Responded to your email',
-        'You have 5 new tasks',
-        'You are now friends with Andrew',
-        'Another Notification',
-        'Another one',
-      ],
+      notifications: [],
     }),
 
     computed: {
@@ -180,6 +188,25 @@
       ...mapMutations({
         setDrawer: 'SET_DRAWER',
       }),
+      supp (item){
+        this.delete(item)
+      },
+      async delete( item ){
+        await NotifReq.deleteMany([item.id,]);
+        await this.initData();
+      },
+      async initData() {
+        try {
+          const not = await NotifReq.getAll();
+          this.notifications = not.data.data
+        } catch (error) {
+          console.log(error)
+        }
+      }
     },
+
+    async mounted () {
+      await this.initData()
+    }
   }
 </script>

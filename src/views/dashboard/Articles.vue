@@ -9,7 +9,6 @@
         cols="12"
         sm="6"
         class="pl-6 pt-6">
-        <small>Showing 1-15 of 45 </small>
       </v-col>
       <v-col
        cols="12"
@@ -68,9 +67,7 @@
         sort-by="title"
         class="elevation-1">
         <template v-slot:item.img="{ item }">
-          <v-img aspect-ratio="1" :src="item.img">
-            
-          </v-img>
+          <v-img aspect-ratio="1" :src="item.img"/>
         </template>
         <template v-slot:item.cat="{ item }">
           <v-chip
@@ -94,7 +91,10 @@
           >
             mdi-delete
           </v-icon>
-
+        </template>
+        
+        <template v-slot:item.createdAt="{ item }">
+          <p>{{new Date(item.createdAt).toLocaleDateString(undefined)}}</p>
         </template>
         <template v-slot:no-data>
           <p>No Data Available</p>
@@ -141,6 +141,18 @@
                   :item-text="'name'"
                   :item-value="'id'"
                   v-model="editedItem.idCat"
+                  style="margin-bottom: -20px;"
+                  outlined
+                  dense
+                />
+              </v-col>
+              <v-col
+                cols="6"
+              ><v-select
+                  class="pa-0" 
+                  label="Etat :"
+                  :items="etats"
+                  v-model="editedEtat"
                   style="margin-bottom: -20px;"
                   outlined
                   dense
@@ -218,23 +230,21 @@
     </v-dialog>
     <v-dialog v-model="dialogDelete" max-width="500px">
       <v-card>
-        <v-card-title class="headline">Are you really want to delete this item?</v-card-title>
+        <v-card-title class="headline">Voulez vous réellement supprimer cet article?</v-card-title>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" text @click="closeDelete()">Cancel</v-btn>
-          <v-btn color="blue darken-1" text @click="deleteItemConfirm( editedItem )">OK</v-btn>
+          <v-btn color="blue darken-1" text @click="closeDelete()">Annuler</v-btn>
+          <v-btn color="blue darken-1" text @click="deleteItemConfirm(editedItem)">Supprimer</v-btn>
           <v-spacer></v-spacer>
         </v-card-actions>
       </v-card>
     </v-dialog>
-
+ 
     <div class="py-3" />
-
   </v-container>
 </template>
 
 <script>
-  import axios from 'axios'
   import * as apiArt from '../../api/article'
   import * as apiCat from '../../api/categorie'
   import { uploadFile } from '../../api/img'
@@ -250,6 +260,7 @@
           selectCat: 'All',
           articles: [],
           categories: [],
+          etats: [ 'Piteux', 'Délicat', 'Convenable', 'Neuf', 'Exquis'],          
           headers: [
           {
             text: 'Image',
@@ -285,20 +296,23 @@
           },
           ],
           editedIndex: -1,
+          editedEtat: null,
           editedItem: {
             idCat: undefined,
             title: '',
             img: '',
-            subtitle: '',
+            etat: null,
             desc: '',
+            authorContact: 'uneuro@contact.fr'
           },
           defaultItem: {
             idCat: undefined,
             title: '',
             img: '',
-            subtitle: '',
+            etat: null,
             desc: '',
-          }
+          },
+          imgSrc:'',
         }
     },
     methods: {
@@ -344,6 +358,7 @@
             const res = await uploadFile(file, 'article');
             console.log(res.data.data.url)
             this.editedItem.img = res.data.data.url;
+            this.editedItem.etat = this.etats.indexOf(this.editedEtat)+1;
             await apiArt.create(item);
           }
           await this.init();
@@ -355,6 +370,9 @@
       },
       async update( item ){
         try {
+          const file = dataURItoFile(this.imgSrc);
+          const res = await uploadFile(file, 'article');
+          this.editedItem.img = res.data.data.url;
           await apiArt.update( item );
         } catch (error) {
           console.log(error);

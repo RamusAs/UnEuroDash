@@ -105,6 +105,16 @@
                     </v-icon>
                   </v-btn>
                 </v-col>
+                
+                <v-col
+                  cols="6"
+                >
+                  <v-text-field
+                    v-model="editedItem.auteur"
+                    :rules="[v => v.length > 2 || 'Min 3 characters']"
+                    label="Auteur"
+                  ></v-text-field>
+                </v-col>
                 <v-col
                   cols="6"
                 >
@@ -178,18 +188,21 @@
 export default {
   data() {
     return{
+      search: '',
       dialog: false,
       dialogDelete: false,
       articles:[],
       imgSrc: '',
       editedIndex: -1,
       editedItem: {
+        auteur: '',
         title: '',
         img: '',
         subtitle: '',
         texte: '',
       },
       defaultItem: {
+        auteur: '',
         title: '',
         img: '',
         subtitle: '',
@@ -245,7 +258,7 @@ export default {
       try {
         if (this.imgSrc && this.imgSrc.includes('data:image')) {
           const file = dataURItoFile(this.imgSrc);
-          const res = await uploadFile(file, 'article');
+          const res = await uploadFile(file, 'blog');
           console.log(res.data.data.url)
           this.editedItem.img = res.data.data.url;
           await Blog.create(item);
@@ -258,6 +271,9 @@ export default {
     },
     async update( item ){
       try {
+        const file = dataURItoFile(this.imgSrc);
+        const res = await uploadFile(file, 'blog');
+        this.editedItem.img = res.data.data.url;
         await Blog.update( item );
       } catch (error) {
         console.log(error);
@@ -300,7 +316,26 @@ export default {
     },
     IsValid () {
       return this.editedItem.title.length >= 3;
-    }
+    },
+    filteredData: function () {
+            var search_array = this.data,
+                searchString = this.searchString;
+
+            if(!searchString){
+                return search_array;
+            }
+
+            searchString = searchString.trim().toLowerCase();
+
+            search_array = search_array.filter(item => {
+                if(item.name.toLowerCase().indexOf(searchString) !== -1){
+                    return item;
+                }
+            })
+
+            // Return an array with the filtered data.
+            return search_array;
+        }
   },
   
   async mounted(){

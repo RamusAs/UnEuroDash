@@ -10,20 +10,20 @@
         lg="4"
       >
         <base-material-chart-card
-          :data="subscriptionChart.data"
-          :options="subscriptionChart.options"
-          :responsive-options="subscriptionChart.responsiveOptions"
+          :data="categoriesChart.data"
+          :options="categoriesChart.options"
+          :responsive-options="categoriesChart.responsiveOptions"
           color="#E91E63"
           hover-reveal
           type="Bar"
         >
           <h4 class="card-title font-weight-light mt-2 ml-2">
-            Website Views
+            Articles par catégories
           </h4>
-
+<!-- 
           <p class="d-inline-flex font-weight-light ml-2 mt-1">
             Pour l'année {{ new Date().getFullYear() }}
-          </p>
+          </p> -->
         </base-material-chart-card>
       </v-col>
 
@@ -130,7 +130,7 @@
           color="orange"
           icon="mdi-sofa"
           title="Bookings"
-          value="184"
+          :value="articles.length"
           sub-icon="mdi-clock"
           sub-text="Just Updated"
         />
@@ -140,11 +140,16 @@
 </template>
 
 <script>
+  
+  import * as apiArt from '../../api/article'
+  import * as apiCat from '../../api/categorie'
   export default {
     name: 'Dashboard',
 
     data () {
       return {
+        articles: [],
+        categories: [],
         dailySalesChart: {
           data: {
             labels: ['M', 'T', 'W', 'T', 'F', 'S', 'S'],
@@ -187,11 +192,11 @@
             },
           },
         },
-        subscriptionChart: {
+        categoriesChart: {
           data: {
-            labels: ['Ja', 'Fe', 'Ma', 'Ap', 'Mai', 'Ju', 'Jul', 'Au', 'Se', 'Oc', 'No', 'De'],
+            labels: [],
             series: [
-              [542, 443, 320, 780, 553, 453, 326, 434, 568, 610, 756, 895],
+              [],
             ],
           },
           options: {
@@ -199,7 +204,7 @@
               showGrid: false,
             },
             low: 0,
-            high: 1000,
+            high: null,
             chartPadding: {
               top: 0,
               right: 5,
@@ -231,6 +236,28 @@
       complete (index) {
         this.list[index] = !this.list[index]
       },
+
+      async initCategoriesChart() {
+        try {
+          const resArt = await (apiArt.getAll());
+          this.articles = resArt.data.data.map(el => (el.idCat));
+          const resCat = await apiCat.getAll();
+          this.categories = resCat.data.data;
+          this.categoriesChart.data.labels = this.categories.map(el => el.name.substring(0,3));
+          this.categoriesChart.options.high = this.articles.length;
+          this.categories.forEach(cat => {
+            this.categoriesChart.data.series[0].push(this.articles.filter(article => article == cat.id).length)
+          });
+    
+        } catch (error) {
+          
+        }
+      }
+
+
     },
+    async mounted() {
+      await this.initCategoriesChart();
+    }
   }
 </script>

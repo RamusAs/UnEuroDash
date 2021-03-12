@@ -59,6 +59,9 @@
             mdi-delete
           </v-icon>
         </template>
+        <template v-slot:item.createdAt="{ item }">
+          <p>{{new Date(item.createdAt).toLocaleDateString(undefined)}}</p>
+        </template>
         <template v-slot:no-data>
           <v-btn
             color="primary"
